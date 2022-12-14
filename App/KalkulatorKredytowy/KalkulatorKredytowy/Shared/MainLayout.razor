@@ -3,17 +3,32 @@
 <PageTitle>Kalkulator Kredytowy</PageTitle>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+@*        <div class="top-row">
+            <h1>Kalkulator kredytowy</h1>
+        </div>
+*@
+
+        <div class="container-fluid h-100">
+            <div class="row justify-content-center h-100">
+                <div class="col-4 bg-red">
+                    <div class="h-100 d-flex flex-column">
+                        <div class="row justify-content-center bg-purple">
+                            <div class="text-white">
+                                <div style="height:150px">ROW 1 - fixed height</div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center bg-blue flex-grow-1">
+                            <div class="text-white">ROW 2 - grow remaining height</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8 bg-gray"></div>
+            </div>
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
+@*        <article class="content px-4">
+
+        </article>*@
     </main>
 </div>
