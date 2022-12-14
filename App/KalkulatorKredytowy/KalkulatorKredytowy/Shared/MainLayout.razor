@@ -2,33 +2,19 @@
 
 <PageTitle>Kalkulator Kredytowy</PageTitle>
 
-<div class="page">
-    <main>
-@*        <div class="top-row">
+<main class="vh-100">
+    <div style="height:10vh" class="d-flex top-row">
+        <div>
             <h1>Kalkulator kredytowy</h1>
         </div>
-*@
+    </div>
 
-        <div class="container-fluid h-100">
-            <div class="row justify-content-center h-100">
-                <div class="col-4 bg-red">
-                    <div class="h-100 d-flex flex-column">
-                        <div class="row justify-content-center bg-purple">
-                            <div class="text-white">
-                                <div style="height:150px">ROW 1 - fixed height</div>
-                            </div>
-                        </div>
-                        <div class="row justify-content-center bg-blue flex-grow-1">
-                            <div class="text-white">ROW 2 - grow remaining height</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-8 bg-gray"></div>
+    <div style="height:90vh" class="d-flex justify-content-center">
+        <div class="align-self-center">
+            <div class="align-items-center">
+                @Body
             </div>
         </div>
+    </div>
 
-@*        <article class="content px-4">
-
-        </article>*@
-    </main>
-</div>
+</main>
