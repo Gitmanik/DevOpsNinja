@@ -1,0 +1,16 @@
+﻿<a href="@ButtonLink" class="btn btn-primary">
+	<span class="oi @IconClass me-2" aria-hidden="true"/>
+	@ButtonText
+</a>
+
+
+@code {
+	[Parameter]
+	public string IconClass { get; set; }
+
+	[Parameter]
+	public string ButtonText { get; set; }
+
+	[Parameter]
+	public string ButtonLink {get;set;}
+}

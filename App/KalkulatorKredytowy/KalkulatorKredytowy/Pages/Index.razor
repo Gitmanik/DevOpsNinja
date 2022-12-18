@@ -1,13 +1,14 @@
 ﻿@page "/"
-
 <PageTitle>Kalkulator kredytowy</PageTitle>
 
-@*<SurveyPrompt Title="How is Blazor working for you?" />*@
-<div style="text-align:center">
-	<Counter/>
-	<Counter/>
-	<Counter/>
-	<Counter/>
-	<Counter/>
-	<Counter/>
+<div style="min-width:200px; text-align:center">
+
+	<h1 style="margin:1rem" class="font-weight-bold">Wybierz produkt:</h1>
+
+	<div style="margin:10px">
+	<IconButton IconClass="oi-pencil" ButtonText="Kredyt inwestycyjny" ButtonLink="fetchdata"/>
+	</div>
+	<div style="margin:10px">
+	<IconButton IconClass="oi-pencil" ButtonText="Pożyczka AGRO" ButtonLink="fetchdata"/>
+	</div>
 </div>
