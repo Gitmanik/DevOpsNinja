@@ -1,0 +1,79 @@
+﻿@page "/agro"
+@using KalkulatorKredytowy.Data
+@inject ScheduleGeneratorService ScheduleService
+
+<PageTitle>Pozyczka AGRO</PageTitle>
+
+<div class="d-flex justify-content-center">
+
+	<h2 class="align-self-center m-5">Pożyczka AGRO</h2>
+	<br />
+	<form class="m-5 w-75 align-self-center">
+
+		<div class="m-3">
+			<label class="form-label" for="name">Imię i nazwisko:</label>
+			<input class="form-control" id="name" type="text" @bind-value=Loan.ClientName/>
+		</div>
+
+		<div class="m-3">
+			<label class="form-label" for="date">Data zawarcia umowy:</label>
+			<input class="form-control" id="date" type="date" @bind-value=Loan.ContractDate />
+		</div>
+
+		<div class="m-3">
+			<label class="form-label" for="span">Okres finansowania:</label>
+			<input class="form-control" id="span" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.FinancingSpan />
+		</div>	
+		
+		<div class="m-3">
+			<label class="form-label" for="value">Wartość inwestycji:</label>
+			<input class="form-control" id="value" pattern="[1-9][0-9]*, [0-9][0-9] PLN" type="text" @bind-value=Loan.InvestmentValue />
+		</div>		
+
+		<div class="m-3">
+			<label class="form-label" for="value">Oprocentowanie kredytu:</label>
+			<input class="form-control" id="value" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.InterestRate />
+		</div>		
+
+		<div class="m-3">
+			<label class="form-label" for="value">Prowizja:</label>
+			<input class="form-control" id="value" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.Commission />
+		</div>		
+
+		<div class="m-3">
+			<label class="form-label" for="value">Harmonogram:</label>
+			<select class="form-control" id="loanschedule" @onchange="AssignSchedule">
+				<option>Miesieczny</option>
+				<option>Kwartalny</option>
+			</select>
+		</div>
+
+	</form>
+</div>
+
+
+@code {
+	private LoanData Loan;
+	protected override async Task OnInitializedAsync()
+	{
+		Loan = new LoanData();
+		Loan.ContractDate = DateTime.Today;
+	}
+
+	private void AssignSchedule(ChangeEventArgs e)
+	{
+		switch ((string?) e.Value)
+		{
+			default:
+				break;
+			case "Miesięczny":
+				Loan.Schedule = LoanSchedule.Monthly;
+				break;
+			case "Kwartalny":
+				Loan.Schedule = LoanSchedule.Quarterly;
+				break;
+		}
+		Console.WriteLine(Loan);
+	}
+
+}
