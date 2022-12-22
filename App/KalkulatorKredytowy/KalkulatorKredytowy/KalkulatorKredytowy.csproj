@@ -6,8 +6,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Layouts\dqe2v2al.4dn~" />
-  </ItemGroup>
-
 </Project>
