@@ -1,6 +1,7 @@
 ﻿@page "/agro"
 @using KalkulatorKredytowy.Data
 @inject ScheduleGeneratorService ScheduleService
+@inject IJSRuntime JS
 
 <PageTitle>Pozyczka AGRO</PageTitle>
 
@@ -12,40 +13,45 @@
 
 		<div class="m-3">
 			<label class="form-label" for="name">Imię i nazwisko:</label>
-			<input class="form-control" id="name" type="text" @bind-value=Loan.ClientName/>
+			<input class="form-control" id="name" type="text" @bind-value=ClientName/>
 		</div>
 
 		<div class="m-3">
 			<label class="form-label" for="date">Data zawarcia umowy:</label>
-			<input class="form-control" id="date" type="date" @bind-value=Loan.ContractDate />
+			<input class="form-control" id="date" type="date" @bind-value=ContractDate/>
 		</div>
 
 		<div class="m-3">
 			<label class="form-label" for="span">Okres finansowania:</label>
-			<input class="form-control" id="span" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.FinancingSpan />
+			<input class="form-control" id="span" pattern="([0-9]{1,3}) miesięcy" type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan/>
 		</div>	
 		
 		<div class="m-3">
 			<label class="form-label" for="value">Wartość inwestycji:</label>
-			<input class="form-control" id="value" pattern="[1-9][0-9]*, [0-9][0-9] PLN" type="text" @bind-value=Loan.InvestmentValue />
+			<input class="form-control" id="value" pattern="[1-9][0-9]*, [0-9][0-9] PLN" type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue/>
 		</div>		
 
 		<div class="m-3">
-			<label class="form-label" for="value">Oprocentowanie kredytu:</label>
-			<input class="form-control" id="value" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.InterestRate />
+			<label class="form-label" for="rate">Oprocentowanie kredytu:</label>
+			<input class="form-control" id="rate" pattern="[1-9][0-9]*" type="text" placeholder="NN,NN %" @bind-value=InterestRate/>
 		</div>		
 
 		<div class="m-3">
-			<label class="form-label" for="value">Prowizja:</label>
-			<input class="form-control" id="value" pattern="[1-9][0-9]*" type="text" @bind-value=Loan.Commission />
+			<label class="form-label" for="commision">Prowizja:</label>
+			<input class="form-control" id="commision" pattern="[1-9][0-9]*" type="text" placeholder="NN,NN %" @bind-value=CommissionRate/>
 		</div>		
 
 		<div class="m-3">
-			<label class="form-label" for="value">Harmonogram:</label>
-			<select class="form-control" id="loanschedule" @onchange="AssignSchedule">
-				<option>Miesieczny</option>
+			<label class="form-label" for="loanschedule">Harmonogram:</label>
+			<select class="form-control" id="loanschedule" @onchange=AssignSchedule>
+				<option>Miesięczny</option>
 				<option>Kwartalny</option>
 			</select>
+		</div>
+
+		<div class="m-3" style="text-align:center">
+			<a class="btn btn-primary" @onclick=GeneratePDF>Generuj harmonogram</a>
+			<input class="btn btn-secondary" type="reset" />
 		</div>
 
 	</form>
@@ -53,11 +59,21 @@
 
 
 @code {
-	private LoanData Loan;
-	protected override async Task OnInitializedAsync()
+
+	public string? ClientName;
+	public DateTime? ContractDate;
+	public string? FinancingSpan;
+	public string? InvestmentValue;
+	public string? InterestRate;
+	public string? CommissionRate;
+	public LoanSchedule Schedule = LoanSchedule.Monthly;
+
+	private async void GeneratePDF(EventArgs e)
 	{
-		Loan = new LoanData();
-		Loan.ContractDate = DateTime.Today;
+		bool wynik = await JS.InvokeAsync<bool>("validateInputs");
+		if (!wynik)
+			return;
+
 	}
 
 	private void AssignSchedule(ChangeEventArgs e)
@@ -67,13 +83,11 @@
 			default:
 				break;
 			case "Miesięczny":
-				Loan.Schedule = LoanSchedule.Monthly;
+				Schedule = LoanSchedule.Monthly;
 				break;
 			case "Kwartalny":
-				Loan.Schedule = LoanSchedule.Quarterly;
+				Schedule = LoanSchedule.Quarterly;
 				break;
 		}
-		Console.WriteLine(Loan);
 	}
-
 }
