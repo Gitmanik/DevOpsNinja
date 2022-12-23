@@ -1,5 +1,6 @@
 ﻿@page "/agro"
 @using KalkulatorKredytowy.Data
+@using System.Text.RegularExpressions;
 @inject ScheduleGeneratorService ScheduleService
 @inject IJSRuntime JS
 
@@ -23,22 +24,22 @@
 
 		<div class="m-3">
 			<label class="form-label" for="span">Okres finansowania:</label>
-			<input class="form-control" id="span" pattern="([0-9]{1,3}) miesięcy" type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan/>
+			<input class="form-control" id="span" pattern=@FinancingSpanRegex.ToString() type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan/>
 		</div>	
 		
 		<div class="m-3">
 			<label class="form-label" for="value">Wartość inwestycji:</label>
-			<input class="form-control" id="value" pattern="[1-9][0-9]*, [0-9][0-9] PLN" type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue/>
+			<input class="form-control" id="value" pattern=@InvestmentValueRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue/>
 		</div>		
 
 		<div class="m-3">
 			<label class="form-label" for="rate">Oprocentowanie kredytu:</label>
-			<input class="form-control" id="rate" pattern="[1-9][0-9]*" type="text" placeholder="NN,NN %" @bind-value=InterestRate/>
+			<input class="form-control" id="rate" pattern=@InterestRateRegex type="text" placeholder="NN,NN %" @bind-value=InterestRate/>
 		</div>		
 
 		<div class="m-3">
 			<label class="form-label" for="commision">Prowizja:</label>
-			<input class="form-control" id="commision" pattern="[1-9][0-9]*" type="text" placeholder="NN,NN %" @bind-value=CommissionRate/>
+			<input class="form-control" id="commision" pattern=@CommissionRateRegex type="text" placeholder="NN,NN %" @bind-value=CommissionRate/>
 		</div>		
 
 		<div class="m-3">
@@ -60,19 +61,43 @@
 
 @code {
 
-	public string? ClientName;
-	public DateTime? ContractDate;
-	public string? FinancingSpan;
-	public string? InvestmentValue;
-	public string? InterestRate;
-	public string? CommissionRate;
+	public string? ClientName = "pablo";
+	public DateTime? ContractDate = DateTime.Today;
+
+	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3}) miesięcy");
+	public string? FinancingSpan = "12 miesięcy";
+	private readonly Regex InvestmentValueRegex = new Regex(@"([0-9 ]*, [0-9][0-9]) PLN");
+	public string? InvestmentValue = "123 456 789, 01 PLN";
+	private readonly Regex InterestRateRegex = new Regex(@"([1-9][0-9]*)");
+	public string? InterestRate = "12,34 %";
+	private readonly Regex CommissionRateRegex = new Regex(@"([1-9][0-9]*)");
+	public string? CommissionRate = "45,67 %";
+
 	public LoanSchedule Schedule = LoanSchedule.Monthly;
 
-	private async void GeneratePDF(EventArgs e)
-	{
-		bool wynik = await JS.InvokeAsync<bool>("validateInputs");
-		if (!wynik)
+	private async void GeneratePDF(EventArgs e) {
+		bool clientSideValidation = await JS.InvokeAsync<bool>("validateInputs");
+		if (!clientSideValidation)
 			return;
+
+		if (ContractDate == null)
+			return;
+
+		if (ClientName == null)
+			return;
+
+		LoanData loan = new LoanData();
+
+		loan.ClientName = ClientName;
+		loan.ContractDate = ContractDate.Value;
+		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan);
+		loan.InvestmentValue = decimal.Parse(InvestmentValueRegex.Match(InvestmentValue).Groups[1].Value.Replace(" ", ""));
+		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan);
+		loan.CommissionRate = decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan);
+		loan.Schedule = Schedule;
+
+		Console.WriteLine(loan);
+
 
 	}
 

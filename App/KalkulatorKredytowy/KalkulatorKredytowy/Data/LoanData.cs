@@ -1,4 +1,8 @@
-﻿namespace KalkulatorKredytowy.Data
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace KalkulatorKredytowy.Data
 {
 	public enum LoanSchedule
 	{
@@ -6,14 +10,14 @@
 		Quarterly
 	}
 
-	public class LoanData
+	public class LoanData : DebugPrintable
 	{
 		public string ClientName;
 		public DateTime ContractDate;
 		public int FinancingSpan;
 		public decimal InvestmentValue;
 		public decimal InterestRate;
-		public decimal Commission;
+		public decimal CommissionRate;
 		public LoanSchedule Schedule;
 	}
 }
