@@ -5,6 +5,7 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ScheduleGeneratorService>();
+builder.Services.AddSingleton<LoanCalculatorService>();
 
 WebApplication app = builder.Build();
 

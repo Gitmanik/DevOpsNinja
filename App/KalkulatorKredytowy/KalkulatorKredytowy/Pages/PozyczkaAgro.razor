@@ -1,7 +1,8 @@
 ﻿@page "/agro"
 @using KalkulatorKredytowy.Data
 @using System.Text.RegularExpressions;
-@inject ScheduleGeneratorService ScheduleService
+@inject ScheduleGeneratorService ScheduleGeneratorService
+@inject LoanCalculatorService LoanCalculatorService
 @inject IJSRuntime JS
 
 <PageTitle>Pozyczka AGRO</PageTitle>
@@ -61,7 +62,7 @@
 
 @code {
 
-	public enum LoanSchedule
+	public enum LoanScheduleType
 	{
 		Monthly,
 		Quarterly
@@ -79,7 +80,7 @@
 	private readonly Regex CommissionRateRegex = new Regex(@"([0-9, ]*)");
 	public string? CommissionRate = "0,00 %";
 
-	public LoanSchedule Schedule = LoanSchedule.Monthly;
+	public LoanScheduleType Schedule = LoanScheduleType.Monthly;
 
 	private async void GeneratePDF(EventArgs e) {
 		bool clientSideValidation = await JS.InvokeAsync<bool>("validateInputs");
@@ -94,17 +95,20 @@
 
 		LoanData loan = new LoanData();
 
+		loan.LoanName = "Pożyczka Agro";
 		loan.ClientName = ClientName;
 		loan.ContractDate = ContractDate.Value;
 		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan);
 		loan.InvestmentValue = decimal.Parse(InvestmentValueRegex.Match(InvestmentValue).Groups[1].Value.Replace(" ", ""));
 		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan);
 		loan.CommissionRate = decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan);
-		loan.InstallmentsInYear = Schedule == LoanSchedule.Monthly ? 12 : 4;
+		loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
 
-		Console.WriteLine(loan);
+		LoanSchedule sch = LoanCalculatorService.CalculateLoan(loan);
 
-		var pdf = await ScheduleService.GeneratePDF(loan);
+		Console.WriteLine(sch);
+
+		var pdf = await ScheduleGeneratorService.GeneratePDF(sch);
 		Console.WriteLine(pdf);
 
 		await JS.InvokeVoidAsync("jsSaveAsFile", "harmonogram.pdf", Convert.ToBase64String(pdf));
@@ -118,10 +122,10 @@
 			default:
 				break;
 			case "Miesięczny":
-				Schedule = LoanSchedule.Monthly;
+				Schedule = LoanScheduleType.Monthly;
 				break;
 			case "Kwartalny":
-				Schedule = LoanSchedule.Quarterly;
+				Schedule = LoanScheduleType.Quarterly;
 				break;
 		}
 	}

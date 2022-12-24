@@ -5,7 +5,7 @@ namespace KalkulatorKredytowy.Data
 {
 	public class ScheduleGeneratorService
 	{
-		public Task<byte[]> GeneratePDF(LoanData l)
+		public Task<byte[]> GeneratePDF(LoanSchedule sch)
 		{
 			MemoryStream ms = new MemoryStream();
 			Document pdf = new Document(PageSize.A4);
@@ -15,9 +15,10 @@ namespace KalkulatorKredytowy.Data
 			PdfWriter writer = PdfWriter.GetInstance(pdf, ms);
 			pdf.Open();
 			var bigFont = FontFactory.GetFont(BaseFont.COURIER, BaseFont.CP1257, 18, Font.BOLD);
+			var mediumFont = FontFactory.GetFont(BaseFont.COURIER, BaseFont.CP1257, 15, Font.BOLD);
 			var smallFont = FontFactory.GetFont(BaseFont.COURIER, BaseFont.CP1257, 12, Font.BOLD);
-			var title = new Paragraph("Harmonogram spłat", bigFont);
-			pdf.Add(title);
+			pdf.Add(new Paragraph($"Harmonogram spłat \"{sch.Data.LoanName}\"", bigFont));
+			pdf.Add(new Paragraph($"Wygenerowano {DateTime.Now} dla {sch.Data.ClientName}", mediumFont));
 
 			Table datatable = new Table(5);
 			datatable.Padding = 2;
@@ -38,39 +39,13 @@ namespace KalkulatorKredytowy.Data
 				datatable.AddCell(c);
 			}
 
-			DateTime currDate = l.ContractDate;
-
-			l.InterestRate /= 100;
-
-			decimal interest = l.InterestRate / l.InstallmentsInYear;
-
-			decimal x = (decimal)Math.Pow((double) (1 + interest), l.FinancingSpan/12*l.InstallmentsInYear);
-			decimal monthlyPayment = l.InvestmentValue * interest*x / (x-1);
-
-			monthlyPayment = decimal.Truncate(monthlyPayment * 100) / 100;
-			decimal capitalLeftToPay = l.InvestmentValue;
-
-			int f = l.FinancingSpan / 12 * l.InstallmentsInYear;
-
-			for (int i = 0; i < f; i++)
+			foreach (var e in sch.Entries)
 			{
-				decimal localInterest = capitalLeftToPay * interest;
-				decimal localCapital = monthlyPayment - localInterest;
-
-				capitalLeftToPay -= localCapital;
-
-				if (i == f - 1)
-				{
-					monthlyPayment += capitalLeftToPay;
-					localInterest = monthlyPayment * interest;
-				}
-
-				datatable.AddCell((i + 1).ToString());
-				datatable.AddCell(currDate.ToString("d"));
-				datatable.AddCell(monthlyPayment.ToString("0.00"));
-				datatable.AddCell((decimal.Truncate(localCapital*100)/100).ToString("0.00"));
-				datatable.AddCell((decimal.Truncate(localInterest*100)/100).ToString("0.00"));
-				currDate = currDate.AddMonths(12/l.InstallmentsInYear);
+				datatable.AddCell(e.No.ToString());
+				datatable.AddCell(e.Date.ToString("d"));
+				datatable.AddCell(e.Payment.ToString("0.00"));
+				datatable.AddCell(e.Capital.ToString("0.00"));
+				datatable.AddCell(e.Interest.ToString("0.00"));
 			}
 
 			pdf.Add(datatable);
