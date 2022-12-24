@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using System.Collections;
+﻿using System.Collections;
+using System.Reflection;
 
 namespace KalkulatorKredytowy.Data
 {

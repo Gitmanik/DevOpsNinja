@@ -1,11 +1,9 @@
-﻿function validateInputs() {  
-
+﻿function validateInputs() {
     var ret = true;
 
     const inputs = document.getElementsByTagName("input");
 
     for (let inp of inputs) {
-
         var pattern = inp.getAttribute("pattern");
         if (pattern == null)
             continue;
