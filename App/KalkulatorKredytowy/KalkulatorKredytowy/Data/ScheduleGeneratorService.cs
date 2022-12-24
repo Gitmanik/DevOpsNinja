@@ -5,7 +5,7 @@ namespace KalkulatorKredytowy.Data
 {
 	public class ScheduleGeneratorService
 	{
-		public Task<byte[]> GeneratePDF(LoanData loan)
+		public Task<byte[]> GeneratePDF(LoanData l)
 		{
 			MemoryStream ms = new MemoryStream();
 			Document pdf = new Document(PageSize.A4);
@@ -22,33 +22,55 @@ namespace KalkulatorKredytowy.Data
 			datatable.Padding = 2;
 			datatable.Spacing = 0;
 
-			float[] headerwidths = { 6, 10, 10, 16, 16 };
+			float[] headerwidths = { 10, 10, 10, 10, 10 };
 
 			datatable.Widths = headerwidths;
 			datatable.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
 
-			Cell c = new Cell(new Paragraph("Rata nr", new Font(Font.HELVETICA, 12, Font.BOLD)));
-			c.BackgroundColor = new BaseColor(0xD0, 0xF4, 0xDE);
-			datatable.AddCell(c);
-			datatable.AddCell("Termin płatności");
-			datatable.AddCell("Wartość raty [PLN]");
-			datatable.AddCell("Część kapitałowa raty [PLN]");
-			datatable.AddCell("Część odsetkowa raty [PLN]");
-			DateTime currDate = loan.ContractDate;
+			string[] headers = { "Rata", "Termin płatności", "Wartość raty [PLN]", "Część kapitałowa raty [PLN]", "Część odsetkowa raty [PLN]" };
 
-			loan.InterestRate /= 100;
-
-			decimal monthlyPayment = (loan.InvestmentValue * loan.InterestRate) /
-				(decimal)(loan.InstallmentsInYear * (1 - Math.Pow((double)(loan.InstallmentsInYear / (loan.InstallmentsInYear + loan.InterestRate)), loan.FinancingSpan * 12 / loan.InstallmentsInYear)));
-
-			for (int i = 0; i < loan.FinancingSpan; i++)
+			foreach (string header in headers)
 			{
+				Cell c = new Cell(new Paragraph(header, new Font(Font.HELVETICA, 12, Font.BOLD)));
+				c.BackgroundColor = new BaseColor(0xD0, 0xF4, 0xDE);
+				datatable.AddCell(c);
+			}
+
+			DateTime currDate = l.ContractDate;
+
+			l.InterestRate /= 100;
+
+			decimal interest = l.InterestRate / l.InstallmentsInYear;
+
+			Console.WriteLine(interest);
+
+			decimal x = (decimal)Math.Pow((double) (1 + interest), (double)l.FinancingSpan);
+			Console.WriteLine(x);
+			decimal monthlyPayment = l.InvestmentValue * interest*x / (x-1);
+			Console.WriteLine(monthlyPayment);
+
+			monthlyPayment = decimal.Truncate(monthlyPayment * 100) / 100;
+			decimal capitalLeftToPay = l.InvestmentValue;
+			decimal sum = 0;
+			for (int i = 0; i < l.FinancingSpan; i++)
+			{
+				decimal localInterest = capitalLeftToPay * interest;
+				decimal localCapital = monthlyPayment - localInterest;
+
+				capitalLeftToPay -= localCapital;	
+
+				if (i == l.FinancingSpan - 1)
+				{
+					monthlyPayment += sum - l.InvestmentValue;
+				}
+
 				datatable.AddCell((i + 1).ToString());
 				datatable.AddCell(currDate.ToString("d"));
 				datatable.AddCell(monthlyPayment.ToString());
-				datatable.AddCell("0");
-				datatable.AddCell("0");
-				currDate = currDate.AddMonths(1);	
+				datatable.AddCell((decimal.Truncate(localCapital*100)/100).ToString());
+				datatable.AddCell((decimal.Truncate(localInterest*100)/100).ToString());
+				currDate = currDate.AddMonths(1);
+				sum += monthlyPayment;
 			}
 
 			pdf.Add(datatable);
