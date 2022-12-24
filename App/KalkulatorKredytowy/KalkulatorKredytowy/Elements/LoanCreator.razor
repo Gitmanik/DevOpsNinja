@@ -1,0 +1,162 @@
+﻿@using KalkulatorKredytowy.Data
+@using System.Text.RegularExpressions;
+@inject ScheduleGeneratorService ScheduleGeneratorService
+@inject LoanCalculatorService LoanCalculatorService
+@inject IJSRuntime JS
+
+<div class="d-flex justify-content-center">
+	<h2 class="align-self-center m-5">@LoanName</h2>
+	<br />
+	<form class="m-5 w-75 align-self-center">
+
+		<div class="m-3">
+			<label class="form-label" for="name">Imię i nazwisko:</label>
+			<input class="form-control" id="name" type="text" @bind-value=ClientName />
+		</div>
+
+		<div class="m-3">
+			<label class="form-label" for="date">Data zawarcia umowy:</label>
+			<input class="form-control" id="date" type="date" @bind-value=ContractDate />
+		</div>
+
+		<div class="m-3">
+			<label class="form-label" for="span">Okres finansowania:</label>
+			<input class="form-control" id="span" pattern=@FinancingSpanRegex.ToString() type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan />
+		</div>
+
+		@if(AllowInvestmentValue.Value)
+		{
+		<div class="m-3">
+			<label class="form-label" for="value">Wartość inwestycji:</label>
+				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue />
+		</div>
+		}
+		@if (AllowOwnContribution.Value)
+		{
+			<div class="m-3">
+				<label class="form-label" for="value">Wkład własny:</label>
+				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=OwnContribution />
+			</div>
+		}
+		<div class="m-3">
+			<label class="form-label" for="value">Kwota kredytu:</label>
+			<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=CreditAmount />
+		</div>
+		<div class="m-3">
+			<label class="form-label" for="rate">Oprocentowanie kredytu:</label>
+			<input class="form-control" id="rate" pattern=@InterestRateRegex type="text" placeholder="NN,NN %" @bind-value=InterestRate />
+		</div>
+
+		@if(AllowCommission.Value)
+		{
+			<div class="m-3">
+				<label class="form-label" for="commision">Prowizja:</label>
+				<input class="form-control" id="commision" pattern=@CommissionRateRegex type="text" placeholder="NN,NN %" @bind-value=CommissionRate />
+			</div>
+		}
+
+		<div class="m-3">
+			<label class="form-label" for="loanschedule">Harmonogram:</label>
+			<select class="form-control" id="loanschedule" @onchange=AssignSchedule>
+				<option>Miesięczny</option>
+				<option>Kwartalny</option>
+			</select>
+		</div>
+
+		<div class="m-3" style="text-align:center">
+			<a class="btn btn-primary" @onclick=GeneratePDF>Generuj harmonogram</a>
+			<input class="btn btn-secondary" type="reset" />
+		</div>
+
+	</form>
+</div>
+
+
+@code {
+
+	[Parameter]
+	public string? LoanName { get; set; }
+
+	[Parameter]
+	public bool? AllowOwnContribution { get; set; }
+
+	[Parameter]
+	public bool? AllowInvestmentValue { get; set; }
+
+	[Parameter]
+	public bool? AllowCommission{ get; set; }
+
+	public enum LoanScheduleType
+	{
+		Monthly,
+		Quarterly
+	}
+
+	public string? ClientName = "pablo";
+	public DateTime? ContractDate = DateTime.Today;
+
+	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3})");
+	public string? FinancingSpan = "60 miesięcy";
+	private readonly Regex CreditAmountRegex = new Regex(@"([0-9 ,]*)");
+	public string? CreditAmount = "50000,00 PLN";
+	private readonly Regex InterestRateRegex = new Regex(@"([0-9, ]*)");
+	public string? InterestRate = "7,20 %";
+	private readonly Regex CommissionRateRegex = new Regex(@"([0-9, ]*)");
+	public string? CommissionRate = "0,00 %";
+
+	public string? OwnContribution;
+	public string? InvestmentValue;
+
+	public LoanScheduleType Schedule = LoanScheduleType.Monthly;
+
+	private async void GeneratePDF(EventArgs e)
+	{
+		bool clientSideValidation = await JS.InvokeAsync<bool>("validateInputs");
+		if (!clientSideValidation)
+			return;
+
+		if (ContractDate == null)
+			return;
+
+		if (ClientName == null)
+			return;
+
+		LoanData loan = new LoanData();
+
+		loan.LoanName = LoanName;
+		loan.ClientName = ClientName;
+		loan.ContractDate = ContractDate.Value;
+		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan);
+		loan.CreditAmount = decimal.Parse(CreditAmountRegex.Match(CreditAmount).Groups[1].Value.Replace(" ", ""));
+		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan);
+		loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan);
+		loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
+		loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan);
+		loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan);
+
+		LoanSchedule sch = LoanCalculatorService.CalculateLoan(loan);
+
+		Console.WriteLine(sch);
+
+		var pdf = await ScheduleGeneratorService.GeneratePDF(sch);
+		Console.WriteLine(pdf);
+
+		await JS.InvokeVoidAsync("jsSaveAsFile", "harmonogram.pdf", Convert.ToBase64String(pdf));
+
+	}
+
+	private void AssignSchedule(ChangeEventArgs e)
+	{
+		switch ((string?)e.Value)
+		{
+			default:
+				break;
+			case "Miesięczny":
+				Schedule = LoanScheduleType.Monthly;
+				break;
+			case "Kwartalny":
+				Schedule = LoanScheduleType.Quarterly;
+				break;
+		}
+	}
+}

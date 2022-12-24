@@ -14,10 +14,10 @@
 			decimal interest = l.InterestRate / l.InstallmentsInYear;
 
 			decimal x = (decimal)Math.Pow((double)(1 + interest), l.FinancingSpan / 12 * l.InstallmentsInYear);
-			decimal monthlyPayment = l.InvestmentValue * interest * x / (x - 1);
+			decimal monthlyPayment = l.CreditAmount * interest * x / (x - 1);
 
 			monthlyPayment = decimal.Truncate(monthlyPayment * 100) / 100;
-			decimal capitalLeftToPay = l.InvestmentValue;
+			decimal capitalLeftToPay = l.CreditAmount;
 
 			int f = l.FinancingSpan / 12 * l.InstallmentsInYear;
 

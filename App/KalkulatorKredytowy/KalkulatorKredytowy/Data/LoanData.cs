@@ -5,9 +5,11 @@
 		public string ClientName;
 		public DateTime ContractDate;
 		public int FinancingSpan;
-		public decimal InvestmentValue;
+		public decimal CreditAmount;
 		public decimal InterestRate;
 		public decimal CommissionRate;
+		public decimal InvestmentValue;
+		public decimal OwnContribution;
 		public int InstallmentsInYear;
 		public string LoanName;
 	}
