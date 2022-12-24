@@ -70,9 +70,9 @@
 	public string? ClientName = "pablo";
 	public DateTime? ContractDate = DateTime.Today;
 
-	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3}) miesięcy");
+	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3})");
 	public string? FinancingSpan = "60 miesięcy";
-	private readonly Regex InvestmentValueRegex = new Regex(@"([0-9 ,]*) PLN");
+	private readonly Regex InvestmentValueRegex = new Regex(@"([0-9 ,]*)");
 	public string? InvestmentValue = "50000,00 PLN";
 	private readonly Regex InterestRateRegex = new Regex(@"([0-9, ]*)");
 	public string? InterestRate = "7,20 %";
