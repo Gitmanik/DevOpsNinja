@@ -61,17 +61,23 @@
 
 @code {
 
+	public enum LoanSchedule
+	{
+		Monthly,
+		Quarterly
+	}
+
 	public string? ClientName = "pablo";
 	public DateTime? ContractDate = DateTime.Today;
 
 	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3}) miesięcy");
-	public string? FinancingSpan = "12 miesięcy";
-	private readonly Regex InvestmentValueRegex = new Regex(@"([0-9 ]*, [0-9][0-9]) PLN");
-	public string? InvestmentValue = "123 456 789, 01 PLN";
-	private readonly Regex InterestRateRegex = new Regex(@"([1-9][0-9]*)");
-	public string? InterestRate = "12,34 %";
-	private readonly Regex CommissionRateRegex = new Regex(@"([1-9][0-9]*)");
-	public string? CommissionRate = "45,67 %";
+	public string? FinancingSpan = "60 miesięcy";
+	private readonly Regex InvestmentValueRegex = new Regex(@"([0-9 ,]*) PLN");
+	public string? InvestmentValue = "50000,00 PLN";
+	private readonly Regex InterestRateRegex = new Regex(@"([0-9, ]*)");
+	public string? InterestRate = "7,20 %";
+	private readonly Regex CommissionRateRegex = new Regex(@"([0-9, ]*)");
+	public string? CommissionRate = "0,00 %";
 
 	public LoanSchedule Schedule = LoanSchedule.Monthly;
 
@@ -94,10 +100,14 @@
 		loan.InvestmentValue = decimal.Parse(InvestmentValueRegex.Match(InvestmentValue).Groups[1].Value.Replace(" ", ""));
 		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan);
 		loan.CommissionRate = decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan);
-		loan.Schedule = Schedule;
+		loan.InstallmentsInYear = Schedule == LoanSchedule.Monthly ? 12 : 4;
 
 		Console.WriteLine(loan);
 
+		var pdf = await ScheduleService.GeneratePDF(loan);
+		Console.WriteLine(pdf);
+
+		await JS.InvokeVoidAsync("jsSaveAsFile", "harmonogram.pdf", Convert.ToBase64String(pdf));
 
 	}
 
