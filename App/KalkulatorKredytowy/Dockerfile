@@ -1,5 +1,4 @@
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -9,6 +8,7 @@ WORKDIR /src
 
 COPY . .
 
+RUN dotnet restore --verbosity n
 RUN dotnet clean
 RUN rm -rf KalkulatorKredytowy/obj
 RUN rm -rf KalkulatorKredytowy/bin
