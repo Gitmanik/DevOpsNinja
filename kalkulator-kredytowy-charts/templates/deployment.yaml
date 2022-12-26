@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: {{ .Values.TargetNamespace}}
   name: kkdeployment
   labels:
     app: kk
@@ -16,6 +17,6 @@ spec:
     spec:
       containers:
         - name: kalkulator
-          image: kalkulator:0.1.6
+          image: {{ .Values.Image }}
           ports:
           - containerPort: 80

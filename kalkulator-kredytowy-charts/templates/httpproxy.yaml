@@ -1,6 +1,7 @@
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
+  namespace: {{ .Values.TargetNamespace }}
   name: kkhttpproxy
 spec:
   virtualhost:
