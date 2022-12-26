@@ -1,0 +1,14 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: kkhttpproxy
+spec:
+  virtualhost:
+    fqdn: localhost
+  routes:
+    - conditions:
+      - prefix: /
+      enableWebsockets: true
+      services:
+        - name: kkservice
+          port: 80
