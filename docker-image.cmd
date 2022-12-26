@@ -1,4 +1,6 @@
-docker build -t kalkulator App\KalkulatorKredytowy
-docker tag kalkulator:latest kalkulator:0.1.0 
-REM --progress plain
-kind load docker-image kalkulator:0.1.0 --name kkcluster
+@for /f "delims=" %%x in (App\VERSION) do set version=%%x
+@echo Building Docker image version: %version%
+docker build -t kalkulator:latest App\KalkulatorKredytowy
+docker tag kalkulator:latest kalkulator:%version%
+@REM --progress plain
+kind load docker-image kalkulator:%version%

@@ -15,7 +15,7 @@ spec:
         app: kkapp
     spec:
       containers:
-        - name: kk
-          image: kalkulator:0.1.0
+        - name: kalkulator
+          image: kalkulator:0.1.6
           ports:
           - containerPort: 80
