@@ -1,5 +1,6 @@
 ﻿@using KalkulatorKredytowy.Data
 @using System.Text.RegularExpressions;
+@using System.Globalization;
 @inject ScheduleGeneratorService ScheduleGeneratorService
 @inject LoanCalculatorService LoanCalculatorService
 @inject IJSRuntime JS
@@ -95,6 +96,8 @@
 	public string? ClientName = "pablo";
 	public DateTime? ContractDate = DateTime.Today;
 
+	private static readonly CultureInfo DefaultCulture = new CultureInfo("pl-PL");
+
 	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3})");
 	public string? FinancingSpan = "60 miesięcy";
 	private readonly Regex CreditAmountRegex = new Regex(@"([0-9 ,]*)");
@@ -126,13 +129,13 @@
 		loan.LoanName = LoanName;
 		loan.ClientName = ClientName;
 		loan.ContractDate = ContractDate.Value;
-		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan);
-		loan.CreditAmount = decimal.Parse(CreditAmountRegex.Match(CreditAmount).Groups[1].Value.Replace(" ", ""));
-		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan);
-		loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan);
+		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan, DefaultCulture);
+		loan.CreditAmount = decimal.Parse(CreditAmountRegex.Match(CreditAmount).Groups[1].Value.Replace(" ", ""), DefaultCulture);
+		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan, DefaultCulture);
+		loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan, DefaultCulture);
 		loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
-		loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan);
-		loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan);
+		loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan, DefaultCulture);
+		loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan, DefaultCulture);
 
 		LoanSchedule sch = LoanCalculatorService.CalculateLoan(loan);
 

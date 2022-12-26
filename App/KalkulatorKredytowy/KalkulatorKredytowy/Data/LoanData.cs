@@ -19,7 +19,7 @@
 		public LoanData Data;
 		public List<ScheduleEntry> Entries = new List<ScheduleEntry>();
 
-		public struct ScheduleEntry
+		public class ScheduleEntry : DebugPrintable
 		{
 			public int No;
 			public DateTime Date;
