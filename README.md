@@ -7,9 +7,7 @@ E-mail użyty do rejestracji w konkursie: thegitman@wp.pl
 
 ## kind-create-cluster.cmd
 
-Tworzy nowy klaster KinD, instaluje Contour oraz ArgoCD.
-
-Contour oraz ArgoCD są instalowane oddzielnie w wyniku istnienia błędu https://github.com/kubernetes/kubectl/issues/1117, gdzie jest race-condition między deployowaniem CRD, a deployowaniem innych zasobów wykorzystujących je w tym samym Charcie.
+Tworzy nowy klaster KinD oraz instaluje ArgoCD.
 
 ## docker-image.cmd
 
