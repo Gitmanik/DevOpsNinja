@@ -7,3 +7,5 @@ kubectl patch daemonsets -n projectcontour envoy -p {"""spec""":{"""template""":
 @REM Instalacja ArgoCD
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+call build.cmd
