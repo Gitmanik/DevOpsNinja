@@ -3,7 +3,7 @@ call docker-image.cmd
 rmdir /q /s generated-charts
 mkdir generated-charts 
 
-call kubectl delete all,configmap,ingress -l type=application --namespace=offer-calculator || goto error
+call kubectl delete all,configmap,ingress -l type=application --namespace=kalkulator || goto error
 call helm template kalkulator-kredytowy-charts > generated-charts/kalkulator.yaml || goto error
 
 call kubectl apply -f generated-charts || goto error
