@@ -9,9 +9,9 @@ spec:
     namespace: ''
     server: 'https://kubernetes.default.svc'
   source:
-    path: kalkulator-kredytowy-charts
-    repoURL: 'https://github.com/Gitmanik/kk-konkurs'
-    targetRevision: HEAD
+    repoURL: 'http://gitmanik.github.io/kk-konkurs'
+    targetRevision: "*"
+    chart: kalkulator-kredytowy-charts
   project: default
   syncPolicy:
     automated:
