@@ -1,4 +1,4 @@
-Image: "kalkulator:0.1.6"
+Image: "ghcr.io/gitmanik/kk-konkurs:main"
 TargetNamespace: "kalkulator"
 
 contour:
