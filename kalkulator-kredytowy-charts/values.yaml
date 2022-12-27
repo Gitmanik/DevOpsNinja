@@ -2,7 +2,6 @@ Image: "kalkulator:0.1.6"
 TargetNamespace: "kalkulator"
 
 contour:
-  namespaceOverride: "contour"
   nodeSelector:
     ingress-ready: "true"
   tolerations:
