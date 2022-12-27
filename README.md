@@ -1,6 +1,7 @@
 # Rozwiązanie zadania konkursowego DevOpsNinja
 
-Autor: Paweł Reich
+Autor: Paweł Reich, gitmanik.dev
+E-mail użyty do rejestracji w konkursie: thegitman@wp.pl
 
 # Opis działania poszczególnych skryptów:
 
@@ -14,11 +15,9 @@ Contour oraz ArgoCD są instalowane oddzielnie w wyniku istnienia błędu https:
 
 Buduje obraz aplikacji z daną wersją (plik VERSION), taguje go oraz ładuje do KinD.
 
-## build.cmd
+## apply-app.cmd
 
-Wywołuje docker-image.cmd.
-
-Usuwa wszystkie zasoby związane z namespace kalkulator, kompiluje Chart dla aplikacji i apply'uje go w klastrze.
+Ładuje zasób aplikacji ArgoCD do klastra.
 
 ## pfw-argocd.cmd
 
