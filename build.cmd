@@ -1,8 +1,5 @@
 call docker-image.cmd
 
-@REM rmdir /q /s generated-charts
-@REM mkdir generated-charts 
-
 call kubectl delete all,configmap,ingress -l type=application --namespace=kalkulator || goto error
 del kalkulator-kredytowy-charts\Chart.lock
 del kalkulator-kredytowy-charts\charts\*.*
