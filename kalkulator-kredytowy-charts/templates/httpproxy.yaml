@@ -13,3 +13,5 @@ spec:
       services:
         - name: kkservice
           port: 80
+      loadBalancerPolicy:
+        strategy: Cookie
