@@ -11,3 +11,5 @@ contour:
   - key: node-role.kubernetes.io/master
     operator: Equal
     effect: NoSchedule
+  service:
+    type: NodePort
