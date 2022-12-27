@@ -4,6 +4,7 @@ metadata:
   namespace: {{ .Values.TargetNamespace }}
   name: kkhttpproxy
 spec:
+  ingressClassName: contour
   virtualhost:
     fqdn: localhost
   routes:
