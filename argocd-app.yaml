@@ -11,7 +11,7 @@ spec:
   source:
     path: kalkulator-kredytowy-charts
     repoURL: 'https://github.com/Gitmanik/kk-konkurs'
-    targetRevision: HEAD
+    targetRevision: helm-dep
   project: default
   syncPolicy:
     automated:
