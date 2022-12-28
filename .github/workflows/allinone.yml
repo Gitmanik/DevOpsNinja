@@ -20,11 +20,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      
-      - name: List dir
-        uses: philips-labs/list-folders-action@v1
-        with:
-          path: .
           
       - name: Sonar
         uses: ./.github/workflows/sonar.yml
@@ -32,3 +27,5 @@ jobs:
         uses: ./.github/workflows/push-chart.yml
       - name: Docker
         uses: ./.github/workflows/push-docker.yml
+
+        # /home/runner/work/kk-konkurs/kk-konkurs
