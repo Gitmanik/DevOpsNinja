@@ -10,51 +10,75 @@
 <div class="d-flex justify-content-center">
 	<h2 class="align-self-center m-5">@LoanName</h2>
 	<br />
+	@if (sch != null)
+	{		
+	<div class="m-5 align-self-center" style="overflow-y:auto; max-height:50vh">
+		<table>
+			<tr>
+				<th>Rata</th>
+				<th>Termin płatności</th>
+				<th>Wartość raty [PLN]</th>
+				<th>Część kapitałowa raty [PLN]</th>
+				<th>Część odsetkowa raty [PLN]</th>
+			</tr>
+			@foreach (LoanSchedule.ScheduleEntry entry in sch.Entries)
+			{
+				<tr>
+					<td>@entry.No</td>
+					<td>@entry.Date.ToString("d")</td>
+					<td>@entry.Payment.ToString("0.00")</td>
+					<td>@entry.Capital.ToString("0.00")</td>
+					<td>@entry.Interest.ToString("0.00")</td>
+				</tr>
+			}
+		</table>
+	</div>
+	}
 	<form class="m-5 w-75 align-self-center">
 
 		<div class="m-3">
 			<label class="form-label" for="name">Imię i nazwisko:</label>
-			<input class="form-control" id="name" type="text" @bind-value=ClientName />
+				<input class="form-control" id="name" type="text" @bind-value=ClientName @oninput=OnChange />
 		</div>
 
 		<div class="m-3">
 			<label class="form-label" for="date">Data zawarcia umowy:</label>
-			<input class="form-control" id="date" type="date" @bind-value=ContractDate />
+				<input class="form-control" id="date" type="date" @bind-value=ContractDate @oninput=OnChange />
 		</div>
 
 		<div class="m-3">
 			<label class="form-label" for="span">Okres finansowania:</label>
-			<input class="form-control" id="span" pattern=@FinancingSpanRegex.ToString() type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan />
+			<input class="form-control" id="span" pattern=@FinancingSpanRegex.ToString() type="text" placeholder="NNN miesięcy" @bind-value=FinancingSpan @oninput=OnChange />
 		</div>
 
 		@if(AllowInvestmentValue.Value)
 		{
 		<div class="m-3">
 			<label class="form-label" for="value">Wartość inwestycji:</label>
-				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue />
+				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=InvestmentValue @oninput=OnChange/>
 		</div>
 		}
 		@if (AllowOwnContribution.Value)
 		{
 			<div class="m-3">
 				<label class="form-label" for="value">Wkład własny:</label>
-				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=OwnContribution />
+				<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=OwnContribution @oninput=OnChange />
 			</div>
 		}
 		<div class="m-3">
 			<label class="form-label" for="value">Kwota kredytu:</label>
-			<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=CreditAmount />
+			<input class="form-control" id="value" pattern=@CreditAmountRegex type="text" placeholder="NNN NNN NNN, NN PLN" @bind-value=CreditAmount @oninput=OnChange />
 		</div>
 		<div class="m-3">
 			<label class="form-label" for="rate">Oprocentowanie kredytu:</label>
-			<input class="form-control" id="rate" pattern=@InterestRateRegex type="text" placeholder="NN,NN %" @bind-value=InterestRate />
+			<input class="form-control" id="rate" pattern=@InterestRateRegex type="text" placeholder="NN,NN %" @bind-value=InterestRate @oninput=OnChange />
 		</div>
 
 		@if(AllowCommission.Value)
 		{
 			<div class="m-3">
 				<label class="form-label" for="commision">Prowizja:</label>
-				<input class="form-control" id="commision" pattern=@CommissionRateRegex type="text" placeholder="NN,NN %" @bind-value=CommissionRate />
+				<input class="form-control" id="commision" pattern=@CommissionRateRegex type="text" placeholder="NN,NN %" @bind-value=CommissionRate @oninput=OnChange />
 			</div>
 		}
 
@@ -100,29 +124,31 @@
 
 	private static readonly CultureInfo DefaultCulture = new CultureInfo("pl-PL");
 
-	private readonly Regex FinancingSpanRegex = new Regex(@"([0-9]{1,3})");
+	private readonly Regex FinancingSpanRegex = new Regex(@"^([0-9]{1,3})( miesięcy)?$");
 	public string? FinancingSpan = "60 miesięcy";
-	private readonly Regex CreditAmountRegex = new Regex(@"([0-9 ,]*)");
+	private readonly Regex CreditAmountRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( PLN)?$");
 	public string? CreditAmount = "50000,00 PLN";
-	private readonly Regex InterestRateRegex = new Regex(@"([0-9, ]*)");
+	private readonly Regex InterestRateRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( %)?$");
 	public string? InterestRate = "7,20 %";
-	private readonly Regex CommissionRateRegex = new Regex(@"([0-9, ]*)");
+	private readonly Regex CommissionRateRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( %)?$");
 	public string? CommissionRate = "0,00 %";
 
 	public string? OwnContribution;
 	public string? InvestmentValue;
 
+	private LoanSchedule sch = null;
+
 	public LoanScheduleType Schedule = LoanScheduleType.Monthly;
 
-	private async void GeneratePDF(EventArgs e)
+	private async void OnChange(EventArgs e)
 	{
-		var src = new ActivitySource("Harmonogram - PDF");
-		src.StartActivity("Client-side weryfikacja wejścia");
+		Activity.Current.AddEvent(new ActivityEvent("Client-side weryfikacja wejścia"));
+
 		bool clientSideValidation = await JS.InvokeAsync<bool>("validateInputs");
 		if (!clientSideValidation)
 			return;
 
-		src.StartActivity("Parsowanie danych");
+		Activity.Current.AddEvent(new ActivityEvent("Parsowanie danych"));
 
 		if (ContractDate == null)
 			return;
@@ -132,27 +158,42 @@
 
 		LoanData loan = new LoanData();
 
-		loan.LoanName = LoanName;
-		loan.ClientName = ClientName;
-		loan.ContractDate = ContractDate.Value;
-		loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan, DefaultCulture);
-		loan.CreditAmount = decimal.Parse(CreditAmountRegex.Match(CreditAmount).Groups[1].Value.Replace(" ", ""), DefaultCulture);
-		loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan, DefaultCulture);
-		loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan, DefaultCulture);
-		loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
-		loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan, DefaultCulture);
-		loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan, DefaultCulture);
+		try
+		{
+			loan.LoanName = LoanName;
+			loan.ClientName = ClientName;
+			loan.ContractDate = ContractDate.Value;
+			loan.FinancingSpan = int.Parse(FinancingSpanRegex.Match(FinancingSpan).Groups[1].ValueSpan, DefaultCulture);
+			loan.CreditAmount = decimal.Parse(CreditAmountRegex.Match(CreditAmount).Groups[1].Value.Replace(" ", ""), DefaultCulture);
+			loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan, DefaultCulture);
+			loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan, DefaultCulture);
+			loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
+			loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan, DefaultCulture);
+			loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan, DefaultCulture);
+		} catch (FormatException ex)
+		{
+			sch = null;
+			return;
+		}
 
-		LoanSchedule sch = LoanCalculatorService.CalculateLoan(loan);
+		sch = LoanCalculatorService.CalculateLoan(loan);
+	}
 
-		Console.WriteLine(sch);
+	private async void GeneratePDF(EventArgs e)
+	{
+		if (sch == null)
+			return;
 
-		src.StartActivity("Generowanie pliku PDF");
+		Activity.Current.AddEvent(new ActivityEvent("Harmonogram - PDF"));
+		
+		Console.WriteLine($"Przygotowywanie PDF dla:\n{sch}");
+
+		Activity.Current.AddEvent(new ActivityEvent("Generowanie pliku PDF"));
 
 		var pdf = await ScheduleGeneratorService.GeneratePDF(sch);
 		Console.WriteLine(pdf);
 
-		src.StartActivity("Wysyłanie do klienta pliku PDF");
+		Activity.Current.AddEvent(new ActivityEvent("Wysyłanie do klienta pliku PDF"));
 		await JS.InvokeVoidAsync("jsSaveAsFile", "harmonogram.pdf", Convert.ToBase64String(pdf));
 
 	}

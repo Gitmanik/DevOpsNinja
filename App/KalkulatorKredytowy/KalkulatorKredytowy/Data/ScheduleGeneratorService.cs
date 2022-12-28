@@ -19,6 +19,8 @@ namespace KalkulatorKredytowy.Data
 			var smallFont = FontFactory.GetFont(BaseFont.COURIER, BaseFont.CP1257, 12, Font.BOLD);
 			pdf.Add(new Paragraph($"Harmonogram spłat \"{sch.Data.LoanName}\"", bigFont));
 			pdf.Add(new Paragraph($"Wygenerowano {DateTime.Now} dla {sch.Data.ClientName}", mediumFont));
+			if (sch.Data.LoanName.ToLower() == "kredyt inwestycyjny")
+				pdf.Add(new Paragraph($"Wartość inwestycji: {sch.Data.InvestmentValue} PLN\nWkład własny: {sch.Data.OwnContribution} PLN\nProwizja:{sch.Data.CommissionRate}%", smallFont));
 
 			Table datatable = new Table(5);
 			datatable.Padding = 2;
