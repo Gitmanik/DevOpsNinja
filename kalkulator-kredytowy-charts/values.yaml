@@ -1,18 +1,10 @@
 Image: "ghcr.io/gitmanik/kk-konkurs:main"
 TargetNamespace: "kalkulator"
 
-contour:
-  namespaceOverride: "contour"
-  envoy:
-    nodeSelector:
-      ingress-ready: "true"
-    tolerations:
-    - key: node-role.kubernetes.io/control-plane
-      operator: Equal
-      effect: NoSchedule
-    - key: node-role.kubernetes.io/master
-      operator: Equal
-      effect: NoSchedule
+nginx:
+  fullnameOverride: "nginx"
+  nodeSelector:
+    ingress-ready: "true"
 
 jaeger:
   namespaceOverride: "jaeger"
