@@ -19,7 +19,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: kkservice
+            name: kkservice-stable
             port:
               number: 80
 
