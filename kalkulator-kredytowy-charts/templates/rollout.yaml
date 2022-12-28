@@ -26,9 +26,8 @@ spec:
       canaryService: kkservice-canary
       stableService: kkservice-stable
       trafficRouting:
-        trafficRouting:
         nginx:
-          stableIngress: kkingress
+          stableIngress: kkingress-stable
           additionalIngressAnnotations:
             canary-by-header: x-canary
             canary-by-header-value: "true"

@@ -45,7 +45,7 @@ jobs:
         run: |
           dotnet-sonarscanner begin /k:"Gitmanik_kk-konkurs" /o:"gitmanik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet build "./App/KalkulatorKredytowy"
-          dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+          dotnet-coverage collect 'dotnet test ./App/KalkulatorKredytowy' -f xml -o 'coverage.xml'
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
           
 
