@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: {{ .Values.TargetNamespace}}
-  name: kkingress
+  name: kkingress-stable
   annotations:
     #https://docs.ovh.com/sg/en/kubernetes/sticky-session-nginx-ingress/
     nginx.ingress.kubernetes.io/rewrite-target: /
