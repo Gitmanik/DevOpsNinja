@@ -26,12 +26,12 @@ spec:
       canaryService: kkservice-canary
       stableService: kkservice-stable
       trafficRouting:
-        istio:
-           virtualService: 
-            name: istio-vs
-            routes:
-            - primary 
-  replicas: 2
+        trafficRouting:
+        nginx:
+          stableIngress: kkingress
+          additionalIngressAnnotations:
+            canary-by-header: x-canary
+            canary-by-header-value: "true"
   revisionHistoryLimit: 2
   selector:
     matchLabels:
