@@ -15,6 +15,7 @@ contour:
       effect: NoSchedule
 
 jaeger:
+  namespaceOverride: "jaeger"
   provisionDataStore:
     cassandra: false
   allInOne:
