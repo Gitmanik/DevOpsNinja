@@ -2,6 +2,21 @@ apiVersion: v1
 entries:
   kalkulator-kredytowy-charts:
   - apiVersion: v2
+    created: "2022-12-28T20:54:21.123441165Z"
+    dependencies:
+    - name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.4.0
+    - name: jaeger
+      repository: file://../jaeger
+      version: 0.65.4
+    digest: dccc11dd60ce0290a187e5e8940d40dae6be3eecc04ca382e9ea1f6c0b2b523a
+    name: kalkulator-kredytowy-charts
+    type: application
+    urls:
+    - https://github.com/Gitmanik/kk-konkurs/releases/download/kalkulator-kredytowy-charts-0.2.0/kalkulator-kredytowy-charts-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2022-12-28T02:45:15.743635768Z"
     dependencies:
     - name: contour
@@ -73,4 +88,4 @@ entries:
     urls:
     - https://github.com/Gitmanik/kk-konkurs/releases/download/kalkulator-kredytowy-charts-0.1.0/kalkulator-kredytowy-charts-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-28T02:45:15.743664168Z"
+generated: "2022-12-28T20:54:21.123473664Z"
