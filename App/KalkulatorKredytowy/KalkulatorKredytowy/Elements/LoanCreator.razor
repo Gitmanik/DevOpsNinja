@@ -1,6 +1,8 @@
 ﻿@using KalkulatorKredytowy.Data
 @using System.Text.RegularExpressions;
 @using System.Globalization;
+@using OpenTelemetry;
+@using System.Diagnostics;
 @inject ScheduleGeneratorService ScheduleGeneratorService
 @inject LoanCalculatorService LoanCalculatorService
 @inject IJSRuntime JS
@@ -114,9 +116,13 @@
 
 	private async void GeneratePDF(EventArgs e)
 	{
+		var src = new ActivitySource("Harmonogram - PDF");
+		src.StartActivity("Client-side weryfikacja wejścia");
 		bool clientSideValidation = await JS.InvokeAsync<bool>("validateInputs");
 		if (!clientSideValidation)
 			return;
+
+		src.StartActivity("Parsowanie danych");
 
 		if (ContractDate == null)
 			return;
@@ -141,9 +147,12 @@
 
 		Console.WriteLine(sch);
 
+		src.StartActivity("Generowanie pliku PDF");
+
 		var pdf = await ScheduleGeneratorService.GeneratePDF(sch);
 		Console.WriteLine(pdf);
 
+		src.StartActivity("Wysyłanie do klienta pliku PDF");
 		await JS.InvokeVoidAsync("jsSaveAsFile", "harmonogram.pdf", Convert.ToBase64String(pdf));
 
 	}
