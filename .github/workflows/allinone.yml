@@ -53,7 +53,7 @@ jobs:
       - name: Build and run CycloneDX
         run: |
           dotnet tool install --global CycloneDX
-          dotnet CycloneDX "./App/KalkulatorKredytowy" -o . -j
+          dotnet CycloneDX "./App/KalkulatorKredytowy/KalkulatorKredytowy.sln" -o . -j
           cat bom.json >> $GITHUB_STEP_SUMMARY
           rm bom.json
 
