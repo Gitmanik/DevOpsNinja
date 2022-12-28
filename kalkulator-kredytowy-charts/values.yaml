@@ -2,7 +2,6 @@ Image: "ghcr.io/gitmanik/kk-konkurs:main"
 TargetNamespace: "kalkulator"
 
 nginx:
-  fullnameOverride: "nginx"
   nodeSelector:
     ingress-ready: "true"
 
