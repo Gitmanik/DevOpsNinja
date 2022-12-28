@@ -18,5 +18,6 @@ spec:
       containers:
         - name: kalkulator
           image: {{ .Values.Image }}
+          imagePullPolicy: Always
           ports:
           - containerPort: 80
