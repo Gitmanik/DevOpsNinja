@@ -5,15 +5,24 @@
 * SonarQube: https://sonarcloud.io/project/overview?id=Gitmanik_kk-konkurs
 * CycloneDX: W summary commitów w branchu main
 
+# Rozwiązania:
+
+* AUTOMATYZACJA BUDOWANIA I INSTALACJI APLIKACJI + TESTOWANIE I SKANOWANIE APLIKACJI:
+    - Zmiany w repozytorium wywołują Workflow w GH Action, który traktuje go SonarQube, CycloneDX, a nastepnie buduje paczkę Helm Chart i buduje obraz kontenera, które hostowane są na GH Pages i GH Packages repo. 
+* AUTOSCALING APLIKACJI NA PODSTAWIE OBCIĄŻENIA:
+    - Skalowanie wykonuje HPA
+* TRACING W APLIKACJI
+    - Jaeger dostępny po sforwardowaniu portu skryptem **pfw-jaeger.cmd**
+* WDRAŻANIE APLIKACJI W TRYBIE CANARY-DEPLOYMENT
+    - Rozwiązanie działa na Argo Rollouts + ingress-nginx
+* URUCHOMIENIE CAŁEJ APLIKACJI I KLASTRA Z KODU
+    - Podczas tworzenia kontenera KinD instalowany jest ArgoCD z powodu buga race-condition, gdzie CRD nie zostały jeszcze zainstalowane przed zasobami korzystających z nich.
+    - Pozostałe elementy instalują się z aplikacji instalowanej do ArgoCD
 # Opis działania poszczególnych skryptów:
 
 ## kind-create-cluster.cmd
 
 Tworzy nowy klaster KinD oraz instaluje ArgoCD.
-
-## docker-image.cmd
-
-Buduje obraz aplikacji z daną wersją (plik VERSION), taguje go oraz ładuje do KinD.
 
 ## apply-app.cmd
 
