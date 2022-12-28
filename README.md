@@ -5,6 +5,8 @@
 * SonarQube: https://sonarcloud.io/project/overview?id=Gitmanik_kk-konkurs
 * CycloneDX: W summary commitów w branchu main
 
+# DOCELOWY KONKURSOWY COMMIT: https://github.com/Gitmanik/kk-konkurs/commit/b693284ab65c621421a1415ebce6134f0579744b
+
 # Rozwiązania:
 
 * AUTOMATYZACJA BUDOWANIA I INSTALACJI APLIKACJI + TESTOWANIE I SKANOWANIE APLIKACJI:
