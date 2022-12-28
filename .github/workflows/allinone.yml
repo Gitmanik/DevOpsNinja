@@ -47,6 +47,16 @@ jobs:
           dotnet-sonarscanner begin /k:"Gitmanik_kk-konkurs" /o:"gitmanik" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build "./App/KalkulatorKredytowy"
           dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          
+
+      # CYCLONEDX
+      - name: Build and run CycloneDX
+        run: |
+          dotnet tool install --global CycloneDX
+          dotnet CycloneDX "./App/KalkulatorKredytowy" -o cyclonedx.json
+          cat cyclonedx.json >> $GITHUB_STEP_SUMMARY
+          rm cyclonedx.json
+
 
       # HELM CHART
       - name: Install Helm
