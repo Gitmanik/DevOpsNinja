@@ -12,8 +12,8 @@ jobs:
   doitall:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write-all
+      packages: write-all
 
     steps:
       - name: Checkout
