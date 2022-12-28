@@ -119,24 +119,24 @@
 		Quarterly
 	}
 
-	public string? ClientName = "pablo";
-	public DateTime? ContractDate = DateTime.Today;
+	public string? ClientName;
+	public DateTime? ContractDate;
 
 	public static readonly CultureInfo DefaultCulture = new CultureInfo("pl-PL");
 
 	public static readonly Regex FinancingSpanRegex = new Regex(@"^([0-9]{1,3})( miesięcy)?$");
-	public string? FinancingSpan = "60 miesięcy";
+	public string? FinancingSpan;
 	public static readonly Regex CreditAmountRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( PLN)?$");
-	public string? CreditAmount = "50000,00 PLN";
+	public string? CreditAmount;
 	public static readonly Regex InterestRateRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( %)?$");
-	public string? InterestRate = "7,20 %";
+	public string? InterestRate;
 	public static readonly Regex CommissionRateRegex = new Regex(@"^([0-9 ]+(,[0-9 ]+)?)( %)?$");
-	public string? CommissionRate = "0,00 %";
+	public string? CommissionRate;
 
 	public string? OwnContribution;
 	public string? InvestmentValue;
 
-	private LoanSchedule sch = null;
+	private LoanSchedule? sch;
 
 	public LoanScheduleType Schedule = LoanScheduleType.Monthly;
 
