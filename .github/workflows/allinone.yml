@@ -1,0 +1,24 @@
+name: Automatyzacja budowania, instalacji, testowania i skanowania aplikacji
+
+on:
+  push:
+    branches: ['main']
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  doitall:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Sonar
+        uses: ./.github/workflows/sonar.yml
+      - name: Helm Chart
+        uses: ./.github/workflows/push-chart.yml
+      - name: Docker
+        uses: ./.github/workflows/push-docker.yml

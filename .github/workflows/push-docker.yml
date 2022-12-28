@@ -1,8 +1,8 @@
 name: Budowa i publikacja obrazu konteneru
 
 on:
-  push:
-    branches: ['main']
+  workflow_call:
+    secrets: inherit
 
 env:
   REGISTRY: ghcr.io

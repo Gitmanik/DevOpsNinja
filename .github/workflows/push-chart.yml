@@ -1,12 +1,11 @@
 name: Publikacja Helm Chart
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    secrets: inherit
 
 jobs:
-  release:
+  release-chart:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
