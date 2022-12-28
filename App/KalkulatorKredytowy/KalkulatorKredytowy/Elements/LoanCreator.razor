@@ -168,8 +168,8 @@
 			loan.InterestRate = decimal.Parse(InterestRateRegex.Match(InterestRate).Groups[1].ValueSpan, DefaultCulture);
 			loan.CommissionRate = CommissionRate == null ? 0 : decimal.Parse(CommissionRateRegex.Match(CommissionRate).Groups[1].ValueSpan, DefaultCulture);
 			loan.InstallmentsInYear = Schedule == LoanScheduleType.Monthly ? 12 : 4;
-			loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CommissionRateRegex.Match(InvestmentValue).Groups[1].ValueSpan, DefaultCulture);
-			loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CommissionRateRegex.Match(OwnContribution).Groups[1].ValueSpan, DefaultCulture);
+			loan.InvestmentValue = InvestmentValue == null ? 0 : decimal.Parse(CreditAmountRegex.Match(InvestmentValue).Groups[1].ValueSpan, DefaultCulture);
+			loan.OwnContribution = OwnContribution == null ? 0 : decimal.Parse(CreditAmountRegex.Match(OwnContribution).Groups[1].ValueSpan, DefaultCulture);
 		} catch (FormatException ex)
 		{
 			sch = null;
