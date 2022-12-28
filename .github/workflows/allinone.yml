@@ -11,15 +11,19 @@ env:
 jobs:
   doitall:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    permissions: read-all|write-all
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - name: List dir
+        uses: philips-labs/list-folders-action@v1
+        with:
+          path: .
+          
       - name: Sonar
         uses: ./.github/workflows/sonar.yml
       - name: Helm Chart
