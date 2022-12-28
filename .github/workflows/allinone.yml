@@ -16,6 +16,10 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Sonar
         uses: ./.github/workflows/sonar.yml
       - name: Helm Chart
