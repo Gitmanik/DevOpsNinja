@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
           
       - name: Sonar
-        uses: ./.github/workflows/sonar.yml
+        uses: ./.github/workflows/sonar
       - name: Helm Chart
         uses: ./.github/workflows/push-chart.yml
       - name: Docker
