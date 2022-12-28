@@ -13,6 +13,7 @@
 
 			if (l.CommissionRate != 0)
 				commisionAmount = l.CreditAmount * l.CommissionRate / 100m / l.FinancingSpan * l.InstallmentsInYear / 12;
+			commisionAmount = decimal.Truncate(commisionAmount * 100) / 100;
 
 			DateTime currDate = l.ContractDate;
 
@@ -26,7 +27,7 @@
 			monthlyPayment = decimal.Truncate(monthlyPayment * 100) / 100;
 			decimal capitalLeftToPay = l.CreditAmount;
 
-			int f = l.FinancingSpan * l.InstallmentsInYear / 12 ;
+			int f = l.FinancingSpan * l.InstallmentsInYear / 12;
 
 			for (int i = 0; i < f; i++)
 			{
@@ -45,9 +46,9 @@
 				{
 					No = i + 1,
 					Date = currDate,
-					Payment = monthlyPayment + decimal.Truncate(commisionAmount),
+					Payment = monthlyPayment,
 					Capital = decimal.Truncate(localCapital * 100) / 100,
-					Interest = decimal.Truncate((localInterest + commisionAmount) * 100) / 100
+					Interest = decimal.Truncate((localInterest) * 100) / 100
 				});
 
 				currDate = currDate.AddMonths(12 / l.InstallmentsInYear);
